@@ -1,6 +1,7 @@
 package main;
 
 import entity.Player;
+import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,14 +19,16 @@ public class GamePanel extends JPanel implements Runnable{
     private final int screenWidth = tileSize * maxScreenCol; // 768 pixels
     private final int screenHeight = tileSize * maxScreenRow; // 576 pixels
 
+    // World settings
+    private final int maxWorldCol = 50;
+    private final int maxWorldRow = 50;
+    private final int worldWidth = tileSize * maxWorldCol;
+    private final int worldHeight = tileSize * maxWorldRow;
+
+    TileManager tileManager = new TileManager(this);
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
     Player player = new Player(this, keyHandler);
-
-    // set player default position
-    private int playerX = 100;
-    private int playerY = 100;
-    private final int playerSpeed = 4;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -39,35 +42,6 @@ public class GamePanel extends JPanel implements Runnable{
         gameThread = new Thread(this);
         gameThread.start();
     }
-
-//    @Override
-//    public void run() {
-//
-//        double drawInterval = (double) 1000000000 / FPS; // 0.01666 seconds
-//        double nextDrawTime = System.nanoTime() + drawInterval;
-//
-//        while (gameThread != null){
-//            // update: info such as character position
-//            update();
-//            // draw: draw the screen with updated information
-//            repaint();
-//
-////            System.out.println("Running.");
-//
-//            try {
-//                double remainingTime = nextDrawTime - System.nanoTime();
-//                remainingTime = remainingTime / 1000000;
-//                if (remainingTime < 0){
-//                    remainingTime = 0;
-//                }
-//                Thread.sleep((long) remainingTime);
-//
-//                nextDrawTime += drawInterval;
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//    }
 
     @Override
     public void run(){
@@ -104,6 +78,7 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        tileManager.draw(g2);
         player.draw(g2);
         g2.dispose();
     }
@@ -160,23 +135,19 @@ public class GamePanel extends JPanel implements Runnable{
         this.player = player;
     }
 
-    public int getPlayerX() {
-        return playerX;
+    public int getMaxWorldRow() {
+        return maxWorldRow;
     }
 
-    public void setPlayerX(int playerX) {
-        this.playerX = playerX;
+    public int getMaxWorldCol() {
+        return maxWorldCol;
     }
 
-    public int getPlayerY() {
-        return playerY;
+    public int getWorldWidth() {
+        return worldWidth;
     }
 
-    public void setPlayerY(int playerY) {
-        this.playerY = playerY;
-    }
-
-    public int getPlayerSpeed() {
-        return playerSpeed;
+    public int getWorldHeight() {
+        return worldHeight;
     }
 }
